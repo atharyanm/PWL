@@ -1,0 +1,50 @@
+
+body {
+    display: flex;
+    height: 100vh;
+    margin: 0;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #343a40;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    padding: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #495057;
+}
+
+.sidebar a {
+    padding: 15px;
+    font-size: 1rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-bottom: 1px solid #495057;
+}
+
+.sidebar a:hover {
+    background-color: #495057;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+}
+
+.content {
+    flex: 1;
+    padding: 20px;
+}
+
+.logout-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
