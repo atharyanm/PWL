@@ -22,7 +22,20 @@ if (isset($_GET['delete_id'])) {
 }
 
 // Fetch all data
-$result = $koneksi->query("SELECT * FROM mahasiswa");
+$limit = 10; // Jumlah data per halaman
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$start = ($page - 1) * $limit;
+
+// Hitung total data
+$total_result = $koneksi->query("SELECT COUNT(*) AS total FROM mahasiswa");
+$total_data = $total_result->fetch_assoc()['total'];
+$total_pages = ceil($total_data / $limit);
+
+// Hitung nomor urut
+$no = ($page - 1) * $limit + 1;
+
+// Modifikasi query untuk mengambil data dengan pagination
+$result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
 ?>
 
 <div class="container mt-4">
@@ -43,7 +56,7 @@ $result = $koneksi->query("SELECT * FROM mahasiswa");
             </tr>
         </thead>
         <tbody>
-            <?php $no = 1; while ($row = $result->fetch_assoc()) { ?>
+            <?php while ($row = $result->fetch_assoc()) { ?>
                 <tr>
                     <td><?php echo $no++; ?></td>
                     <td><?php echo htmlspecialchars($row['nim']); ?></td>
@@ -66,6 +79,28 @@ $result = $koneksi->query("SELECT * FROM mahasiswa");
             <?php } ?>
         </tbody>
     </table>
+    <!-- Setelah tabel, tambahkan kode pagination -->
+    <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        <?php if ($page > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?php echo $page - 1; ?>">Sebelumnya</a>
+            </li>
+        <?php endif; ?>
+
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            </li>
+        <?php endfor; ?>
+
+        <?php if ($page < $total_pages): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?php echo $page + 1; ?>">Selanjutnya</a>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
@@ -162,6 +197,86 @@ $(document).ready(function() {
                 }
             });
         });
+    });
+});
+function loadPaginatedData(page) {
+    $.ajax({
+        url: 'data_mahasiswa.php',
+        method: 'GET',
+        data: { page: page },
+        success: function(response) {
+            // Ekstrak tabel dan pagination dari response
+            var $newTable = $(response).find('table');
+            var $newPagination = $(response).find('nav');
+            
+            // Ganti konten tabel dan pagination
+            $('table').replaceWith($newTable);
+            $('nav').replaceWith($newPagination);
+            
+            // Tambahkan event listener baru untuk tombol hapus
+            bindDeleteButtons();
+        },
+        error: function() {
+            alert('Gagal memuat data');
+        }
+    });
+}
+
+function bindDeleteButtons() {
+    $('.btn-hapus').on('click', function() {
+        const deleteId = $(this).data('id');
+        
+        // Tampilkan modal konfirmasi hapus
+        $('#confirmDeleteModal').modal('show');
+        
+        // Jika tombol konfirmasi diklik
+        $('#confirmDeleteBtn').off('click').on('click', function() {
+            $.ajax({
+                url: 'hapus_mahasiswa.php',
+                method: 'GET',
+                data: { delete_id: deleteId },
+                dataType: 'json',
+                success: function(response) {
+                    $('#confirmDeleteModal').modal('hide');
+                    if (response.status === 'success') {
+                        $('#successDeleteModal').modal('show');
+                        $('#successDeleteModal').on('hidden.bs.modal', function () {
+                            // Muat ulang halaman pertama setelah hapus
+                            loadPaginatedData(1);
+                        });
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Terjadi kesalahan saat menghapus data.');
+                }
+            });
+        });
+    });
+}
+
+$(document).ready(function() {
+    // Inisialisasi event handler tombol hapus
+    bindDeleteButtons();
+
+    // Handler untuk pagination
+    $(document).on('click', '.pagination .page-link', function(e) {
+        e.preventDefault();
+        
+        // Hindari reload jika mengklik halaman aktif saat ini
+        if ($(this).closest('li').hasClass('active')) return;
+
+        var page = $(this).text();
+        
+        // Cek jika tombol sebelumnya/selanjutnya
+        if ($(this).text() === 'Sebelumnya') {
+            page = parseInt($('.pagination .active .page-link').text()) - 1;
+        } else if ($(this).text() === 'Selanjutnya') {
+            page = parseInt($('.pagination .active .page-link').text()) + 1;
+        }
+        
+        loadPaginatedData(page);
     });
 });
 </script>
