@@ -42,6 +42,10 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
     <h2>Data Mahasiswa</h2>
     
     <a href="#" onclick="loadPage('tambah_mahasiswa')" class="btn btn-primary mb-3">Tambah Data</a>
+    
+    <a href="cetak_mahasiswa_pdf.php" class="btn btn-success mb-3" target="_blank">
+        <i class="fas fa-print"></i> Cetak PDF
+    </a>
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
