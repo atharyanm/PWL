@@ -68,7 +68,7 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
                         <?php if ($row['foto_profil']) { ?>
                             <img src="uploads/<?php echo htmlspecialchars($row['foto_profil']); ?>" alt="Foto Profil" width="50" height="50">
                         <?php } else { ?>
-                            <span>No Image</span>
+                            <span class="badge badge-secondary">Tidak ada foto</span>
                         <?php } ?>
                     </td>
                     <td><?php echo htmlspecialchars($row['nama']); ?></td>

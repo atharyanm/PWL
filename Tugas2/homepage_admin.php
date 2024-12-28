@@ -93,8 +93,8 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                 case 'matakuliah':
                     pageUrl = 'data_matkul.php';
                     break;
-                case 'matakuliah':
-                    pageUrl = 'datamatkul_tawar.php';
+                case 'matakuliah_tawar':
+                    pageUrl = 'data_matkul_tawar.php';
                     break;
                 default:
                     pageUrl = 'default_dashboard.php';
