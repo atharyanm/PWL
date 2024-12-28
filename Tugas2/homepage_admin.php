@@ -28,6 +28,9 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
         <h2><i class="fas fa-user-shield"></i> Menu Admin</h2>
         <a href="#" onclick="loadPage('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="#" onclick="loadPage('data_mahasiswa')"><i class="fas fa-user-graduate"></i> Data Mahasiswa</a>
+        <a href="#" onclick="loadPage('data_dosen')"><i class="	fas fa-chalkboard-teacher"></i> Data Dosen</a>
+        <a href="#" onclick="loadPage('matakuliah')"><i class="fas fa-book"></i> Mata Kuliah</a>
+        <a href="#" onclick="loadPage('matakuliah_tawar')"><i class="fas fa-book-open"></i> Mata Kuliah Tawar</a>
         <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a> <!-- Menu Cari Mahasiswa -->
         <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
     </div>
@@ -83,6 +86,15 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                     break;
                 case 'cari_mahasiswa':
                     pageUrl = 'cari_mahasiswa.php'; // Halaman untuk Cari Mahasiswa
+                    break;
+                case 'data_dosen':
+                    pageUrl = 'data_dosen.php';
+                    break;
+                case 'matakuliah':
+                    pageUrl = 'data_matkul.php';
+                    break;
+                case 'matakuliah':
+                    pageUrl = 'datamatkul_tawar.php';
                     break;
                 default:
                     pageUrl = 'default_dashboard.php';
