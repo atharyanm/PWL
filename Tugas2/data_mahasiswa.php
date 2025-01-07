@@ -41,11 +41,16 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
 <div class="container mt-4">
     <h2>Data Mahasiswa</h2>
     
-    <a href="#" onclick="loadPage('tambah_mahasiswa')" class="btn btn-primary mb-3">Tambah Data</a>
-    
-    <a href="cetak_mahasiswa_pdf.php" class="btn btn-success mb-3" target="_blank">
-        <i class="fas fa-print"></i> Cetak PDF
-    </a>
+    <div class="row mb-3">
+        <div class="col">
+            <a href="#" onclick="loadPage('tambah_mahasiswa')" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Tambah Data Mahasiswa
+            </a>
+            <a href="cetak_dosen_pdf.php" class="btn btn-success ml-2" target="_blank">
+                <i class="fas fa-print"></i> Cetak PDF
+            </a>
+        </div>
+    </div>
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
@@ -76,8 +81,17 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
                     <td><?php echo htmlspecialchars($row['password']); ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
                     <td>
-                        <a href="#" onclick="loadPage('edit_mahasiswa&id=<?php echo $row['id']; ?>')" class="btn btn-warning btn-sm">Edit</a>
-                        <button class="btn btn-danger btn-sm btn-hapus" data-id="<?php echo $row['id']; ?>">Hapus</button>
+                    <div class="btn-group" role="group">
+                        <a href="#" 
+                        onclick="loadPage('edit_mahasiswa&id=<?php echo $row['id']; ?>')" 
+                        class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button class="btn btn-danger btn-sm btn-hapus" 
+                                data-id="<?php echo $row['id']; ?>">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </div>
                     </td>
                 </tr>
             <?php } ?>

@@ -64,68 +64,84 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 <!-- jQuery dan AJAX -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
-    // Fungsi untuk memuat halaman dinamis
-    function loadPage(page) {
-        let pageUrl;
+// Fungsi untuk memuat halaman dinamis
+function loadPage(page) {
+    let pageUrl;
 
-        // Tentukan halaman yang dimuat berdasarkan nama
-        if (page.startsWith('edit_mahasiswa')) {
-            const params = new URLSearchParams(page.split('&').slice(1).join('&'));
-            const id = params.get('id');
-            pageUrl = `edit_mahasiswa.php?id=${id}`;
-        } else {
-            switch (page) {
-                case 'dashboard':
-                    pageUrl = 'default_dashboard.php';
-                    break;
-                case 'data_mahasiswa':
-                    pageUrl = 'data_mahasiswa.php';
-                    break;
-                case 'tambah_mahasiswa':
-                    pageUrl = 'tambah_mahasiswa.php';
-                    break;
-                case 'tambah_dosen':
-                    pageUrl = 'tambah_dosen.php';
-                    break;
-                case 'cari_mahasiswa':
-                    pageUrl = 'cari_mahasiswa.php'; // Halaman untuk Cari Mahasiswa
-                    break;
-                case 'data_dosen':
-                    pageUrl = 'data_dosen.php';
-                    break;
-                case 'matakuliah':
-                    pageUrl = 'data_matkul.php';
-                    break;
-                case 'matakuliah_tawar':
-                    pageUrl = 'data_matkul_tawar.php';
-                    break;
-                default:
-                    pageUrl = 'default_dashboard.php';
-            }
+    // Tentukan halaman yang dimuat berdasarkan nama
+    if (page.startsWith('edit_mahasiswa')) {
+        const params = new URLSearchParams(page.split('&').slice(1).join('&'));
+        const id = params.get('id');
+        pageUrl = `edit_mahasiswa.php?id=${id}`;
+    }
+    else if (page.startsWith('edit_dosen')) {
+        // Pastikan ekstraksi parameter NPP benar
+        const npp = page.split('&')[1].split('=')[1];
+        pageUrl = `edit_dosen.php?npp=${npp}`;
+    }
+    else {
+        switch (page) {
+            case 'dashboard':
+                pageUrl = 'default_dashboard.php';
+                break;
+            case 'data_mahasiswa':
+                pageUrl = 'data_mahasiswa.php';
+                break;
+            case 'tambah_mahasiswa':
+                pageUrl = 'tambah_mahasiswa.php';
+                break;
+            case 'tambah_dosen':
+                pageUrl = 'tambah_dosen.php';
+                break;
+            case 'data_dosen':
+                pageUrl = 'data_dosen.php';
+                break;
+            case 'matakuliah':
+                pageUrl = 'data_matkul.php';
+                break;
+            case 'matakuliah_tawar':
+                pageUrl = 'data_matkul_tawar.php';
+                break;
+            default:
+                pageUrl = 'default_dashboard.php';
         }
-
-        // Menggunakan AJAX untuk memuat halaman tanpa reload
-        $.ajax({
-            url: pageUrl,
-            success: function(response) {
-                $('#content-area').html(response); // Masukkan konten halaman ke dalam div#content-area
-            },
-            error: function() {
-                $('#content-area').html('<p class="text-danger">Error loading page. Please try again later.</p>');
-            }
-        });
     }
-
-    // Menampilkan modal hasil pencarian dan memasukkan data hasil pencarian ke dalam modal
-    function showSearchResultsModal(content) {
-        $('#modal-body-content').html(content); // Masukkan konten hasil pencarian
-        $('#searchResultsModal').modal('show'); // Tampilkan modal
-    }
-
-    // Memuat halaman dashboard secara default saat pertama kali halaman diakses
-    $(document).ready(function() {
-        loadPage('dashboard');
+    
+    // Menggunakan AJAX untuk memuat halaman tanpa reload
+    $.ajax({
+        url: pageUrl,
+        method: 'GET',
+        success: function(response) {
+            $('#content-area').html(response);
+        },
+        error: function(xhr, status, error) {
+            console.error("Error loading page:", error);
+            $('#content-area').html('<p class="text-danger">Error loading page. Please try again later.</p>');
+        }
     });
+}
+
+// Inisialisasi dan event handler saat dokumen siap
+$(document).ready(function() {
+    // Memuat halaman dashboard secara default
+    loadPage('dashboard');
+
+    // Event handler untuk menu navigasi
+    $('.nav-link').on('click', function(e) {
+        e.preventDefault();
+        const page = $(this).data('page');
+        loadPage(page);
+    });
+
+    // Event handler untuk tombol logout
+    $('#logout-btn').on('click', function(e) {
+        e.preventDefault();
+        // Konfirmasi logout
+        if(confirm('Apakah Anda yakin ingin logout?')) {
+            window.location.href = 'logout.php';
+        }
+    });
+});
 </script>
 
 <!-- Bootstrap JS dan Font Awesome JS -->
