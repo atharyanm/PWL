@@ -56,6 +56,18 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" 
+                               class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="text" name="password" 
+                               class="form-control" required>
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Simpan</button>
                     <a href="data_dosen.php" class="btn btn-secondary">Kembali</a>
                 </form>

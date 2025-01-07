@@ -52,6 +52,8 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
                     <th>NPP</th>
                     <th>Nama Dosen</th>
                     <th>Homebase</th>
+                    <th>Username</th>
+                    <th>Password</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -62,6 +64,8 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
                         <td><?php echo htmlspecialchars($row['npp']); ?></td>
                         <td><?php echo htmlspecialchars($row['namadosen']); ?></td>
                         <td><?php echo htmlspecialchars($row['homebase']); ?></td>
+                        <td><?php echo htmlspecialchars($row['username']); ?></td>
+                        <td><?php echo htmlspecialchars($row['password']); ?></td>
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="#" 

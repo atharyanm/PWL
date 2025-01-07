@@ -15,12 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nomor_urut = $_POST['nomor_urut'];
     $nama_dosen = trim($_POST['nama_dosen']);
     $homebase = $_POST['homebase'];
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
 
     // Susun NPP lengkap
     $npp = "0686.11." . $tahun_npp . "." . $nomor_urut;
 
     // Validasi input dasar
-    if (empty($nama_dosen) || empty($nomor_urut)) {
+    if (empty($nama_dosen) || empty($nomor_urut) || empty($username) || empty($password)) {
         echo json_encode([
             'status' => 'error', 
             'message' => 'Semua field harus diisi!'
@@ -33,6 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode([
             'status' => 'error', 
             'message' => 'Nomor urut harus berupa angka!'
+        ]);
+        exit();
+    }
+
+    // Validasi panjang username
+    if (strlen($username) < 4) {
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'Username minimal 4 karakter!'
         ]);
         exit();
     }
@@ -51,9 +62,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
+    // Cek username duplikat
+    $cek_username = $koneksi->prepare("SELECT * FROM dosen WHERE username = ?");
+    $cek_username->bind_param("s", $username);
+    $cek_username->execute();
+    $result_username = $cek_username->get_result();
+
+    if ($result_username->num_rows > 0) {
+        echo json_encode([
+            'status' => 'error', 
+            'message' => 'Username sudah digunakan!'
+        ]);
+        exit();
+    }
+
     // Query tambah dosen
-    $query = $koneksi->prepare("INSERT INTO dosen (npp, namadosen, homebase) VALUES (?, ?, ?)");
-    $query->bind_param("sss", $npp, $nama_dosen, $homebase);
+    $query = $koneksi->prepare("INSERT INTO dosen (npp, namadosen, homebase, username, password) VALUES (?, ?, ?, ?, ?)");
+    $query->bind_param("sssss", $npp, $nama_dosen, $homebase, $username, $password);
 
     if ($query->execute()) {
         echo json_encode([
@@ -61,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'message' => 'Data dosen berhasil ditambahkan!',
             'npp' => $npp,
             'nama_dosen' => $nama_dosen,
-            'homebase' => $homebase
+            'homebase' => $homebase,
+            'username' => $username
         ]);
     } else {
         echo json_encode([

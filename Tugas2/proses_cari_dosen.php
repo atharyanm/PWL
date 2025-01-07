@@ -54,6 +54,8 @@ if ($result->num_rows > 0) {
             <th>NPP</th>
             <th>Nama Dosen</th>
             <th>Homebase</th>
+            <th>Username</th>
+            <th>Password</th>
             <th>Aksi</th>
           </tr>';
     echo '</thead>';
@@ -66,6 +68,8 @@ if ($result->num_rows > 0) {
         echo '<td>' . htmlspecialchars($row['npp']) . '</td>';
         echo '<td>' . htmlspecialchars($row['namadosen']) . '</td>';
         echo '<td>' . htmlspecialchars($row['homebase']) . '</td>';
+        echo '<td>' . htmlspecialchars($row['username']) . '</td>';
+        echo '<td>' . htmlspecialchars($row['password']) . '</td>';
         echo '<td>
                 <div class="btn-group" role="group">
                     <a href="#" 

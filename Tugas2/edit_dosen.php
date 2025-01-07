@@ -70,6 +70,24 @@ $dosen = $result->fetch_assoc();
                 </div>
 
                 <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" 
+                           name="username" 
+                           class="form-control" 
+                           value="<?php echo htmlspecialchars($dosen['username']); ?>" 
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="text" 
+                           name="password" 
+                           class="form-control" 
+                           value="<?php echo htmlspecialchars($dosen['password']); ?>" 
+                           required>
+                </div>
+
+                <div class="form-group">
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     <a href="#" onclick="loadPage('data_dosen')" class="btn btn-secondary">Kembali</a>
                 </div>

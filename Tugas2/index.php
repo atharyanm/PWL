@@ -47,24 +47,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Cek login untuk setiap tipe user
     $admin = checkLogin($koneksi, $username, $passw, 'admin');
-    // $mahasiswa = checkLogin($koneksi, $username, $passw, 'mahasiswa');
-    // $dosen = checkLogin($koneksi, $username, $passw, 'dosen');
+    $mahasiswa = checkLogin($koneksi, $username, $passw, 'mahasiswa');
+    $dosen = checkLogin($koneksi, $username, $passw, 'dosen');
 
     if ($admin) {
         $_SESSION['username'] = $username;
         $_SESSION['status'] = 'admin';
         header("Location: homepage_admin.php");
         exit();
-    // } elseif ($mahasiswa) {
-    //     $_SESSION['username'] = $username;
-    //     $_SESSION['status'] = 'mhs';
-    //     header("Location: homepage_mhs.php");
-    //     exit();
-    // } elseif ($dosen) {
-    //     $_SESSION['username'] = $username;
-    //     $_SESSION['status'] = 'dosen';
-    //     header("Location: homepage_dosen.php");
-    //     exit();
+    } elseif ($mahasiswa) {
+        $_SESSION['username'] = $username;
+        $_SESSION['status'] = 'mhs';
+        header("Location: homepage_mhs.php");
+        exit();
+    } elseif ($dosen) {
+        $_SESSION['username'] = $username;
+        $_SESSION['status'] = 'dosen';
+        header("Location: homepage_dosen.php");
+        exit();
     } else {
         $error_message = "Login gagal. Periksa kembali username dan password.";
     }
