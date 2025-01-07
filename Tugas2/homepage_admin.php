@@ -31,8 +31,8 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
         <a href="#" onclick="loadPage('data_dosen')"><i class="	fas fa-chalkboard-teacher"></i> Data Dosen</a>
         <a href="#" onclick="loadPage('matakuliah')"><i class="fas fa-book"></i> Mata Kuliah</a>
         <a href="#" onclick="loadPage('matakuliah_tawar')"><i class="fas fa-book-open"></i> Mata Kuliah Tawar</a>
-        <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a>
-        <a href="#" onclick="loadPage('cari_dosen')"><i class="fas fa-search"></i> Cari Dosen</a>
+        <!-- <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a>
+        <a href="#" onclick="loadPage('cari_dosen')"><i class="fas fa-search"></i> Cari Dosen</a> -->
         <a href="#" id="logout-btn" class="text-danger">
             <i class="fas fa-sign-out-alt"></i> Log Out
         </a>

@@ -41,6 +41,9 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
             <a href="cetak_dosen_pdf.php" class="btn btn-success ml-2" target="_blank">
                 <i class="fas fa-print"></i> Cetak PDF
             </a>
+            <a href="#" onclick="loadPage('cari_dosen')" class="btn btn-primary ml-2">
+                <i class="fas fa-search"></i> Cari Data Dosen
+            </a>
         </div>
     </div>
 

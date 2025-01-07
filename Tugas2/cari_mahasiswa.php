@@ -27,6 +27,9 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
+            <a href="#" onclick="loadPage('data_mahasiswa')" class="btn btn-primary mb-4">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
             <h2 class="mb-4">
                 <i class="fas fa-search"></i> Pencarian Mahasiswa
             </h2>
