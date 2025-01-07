@@ -76,40 +76,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Sistem</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center mt-5">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h3>Login Sistem</h3>
-                    </div>
-                    <div class="card-body">
-                        <?php 
-                        if (!empty($error_message)) {
-                            echo "<div class='alert alert-danger'>$error_message</div>";
-                        }
-                        ?>
-                        <form method="post">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input type="text" name="username" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Password</label>
-                                <input type="password" name="passw" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<div class="login-wrapper">
+    <div class="login-info">
+        <div class="login-info-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="login-info-text">
+            <h2>Sistem Akademik</h2>
+            <p>A12.2022.06869</p>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <div class="login-form">
+        <div class="login-header mb-4">
+            <h2>Login</h2>
+            <p class="text-muted">Masukkan username dan password Anda</p>
+        </div>
+        
+        <?php 
+        if (!empty($error_message)) {
+            echo "<div class='alert alert-danger'>$error_message</div>";
+        }
+        ?>
+        
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="passw" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
