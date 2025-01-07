@@ -31,8 +31,11 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
         <a href="#" onclick="loadPage('data_dosen')"><i class="	fas fa-chalkboard-teacher"></i> Data Dosen</a>
         <a href="#" onclick="loadPage('matakuliah')"><i class="fas fa-book"></i> Mata Kuliah</a>
         <a href="#" onclick="loadPage('matakuliah_tawar')"><i class="fas fa-book-open"></i> Mata Kuliah Tawar</a>
-        <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a> <!-- Menu Cari Mahasiswa -->
-        <a href="logout.php" class="text-danger"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a>
+        <a href="#" onclick="loadPage('cari_dosen')"><i class="fas fa-search"></i> Cari Dosen</a>
+        <a href="#" id="logout-btn" class="text-danger">
+            <i class="fas fa-sign-out-alt"></i> Log Out
+        </a>
     </div>
 
     <!-- Content Area -->
@@ -41,21 +44,32 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
     </div>
 </div>
 
-<!-- Modal untuk Menampilkan Hasil Pencarian -->
-<div class="modal fade" id="searchResultsModal" tabindex="-1" role="dialog" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
+<!-- Modal Logout -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="searchResultsModalLabel">Hasil Pencarian</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-sign-out-alt"></i> Konfirmasi Logout
+                </h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modal-body-content">
-                <!-- Hasil pencarian akan dimasukkan di sini melalui AJAX -->
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-question-circle fa-4x text-danger"></i>
+                </div>
+                <h4>Apakah Anda yakin ingin logout?</h4>
+                <p class="text-muted">Sesi Anda akan berakhir dan Anda harus login kembali.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Batal
+                </button>
+                <a href="#" id="konfirmasi-logout" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </div>
         </div>
     </div>
@@ -102,6 +116,12 @@ function loadPage(page) {
             case 'matakuliah_tawar':
                 pageUrl = 'data_matkul_tawar.php';
                 break;
+            case 'cari_mahasiswa':
+                pageUrl = 'cari_mahasiswa.php';
+                break;
+            case 'cari_dosen':
+                pageUrl = 'cari_dosen.php';
+                break;
             default:
                 pageUrl = 'default_dashboard.php';
         }
@@ -131,15 +151,40 @@ $(document).ready(function() {
         e.preventDefault();
         const page = $(this).data('page');
         loadPage(page);
+
+        // Tampilkan modal logout
+        $('#logoutModal').modal('show');
     });
 
     // Event handler untuk tombol logout
+    $('#konfirmasi-logout').on('click', function(e) {
+        e.preventDefault(); // Mencegah navigasi langsung
+        
+        $.ajax({
+            url: 'logout.php',
+            type: 'POST',
+            data: { ajax_logout: true },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Redirect ke halaman login
+                    window.location.href = 'index.php';
+                }
+            },
+            error: function() {
+                // Fallback jika ajax gagal
+                window.location.href = 'logout.php';
+            }
+        });
+    });
+});
+
+<!-- Script untuk memicu modal logout -->
+$(document).ready(function() {
+    // Event handler untuk tombol logout
     $('#logout-btn').on('click', function(e) {
         e.preventDefault();
-        // Konfirmasi logout
-        if(confirm('Apakah Anda yakin ingin logout?')) {
-            window.location.href = 'logout.php';
-        }
+        $('#logoutModal').modal('show');
     });
 });
 </script>
