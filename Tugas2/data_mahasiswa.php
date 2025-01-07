@@ -22,7 +22,7 @@ if (isset($_GET['delete_id'])) {
 }
 
 // Fetch all data
-$limit = 10; // Jumlah data per halaman
+$limit = 5; // Jumlah data per halaman
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 
@@ -46,7 +46,7 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
             <a href="#" onclick="loadPage('tambah_mahasiswa')" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Tambah Data Mahasiswa
             </a>
-            <a href="cetak_dosen_pdf.php" class="btn btn-success ml-2" target="_blank">
+            <a href="cetak_mahasiswa_pdf.php" class="btn btn-success ml-2" target="_blank">
                 <i class="fas fa-print"></i> Cetak PDF
             </a>
         </div>
