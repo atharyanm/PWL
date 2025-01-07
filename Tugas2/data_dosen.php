@@ -137,37 +137,67 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
     </div>
 </div>
 
+<!-- Modal Error -->
+<div class="modal fade" id="errorDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Gagal Menghapus</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Pesan error akan diisi secara dinamis -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Menangani klik pada tombol hapus dengan modal konfirmasi
     $('.btn-hapus').on('click', function() {
         const deleteNpp = $(this).data('npp');
+        const $row = $(this).closest('tr');
         
-        // Tampilkan modal konfirmasi hapus
         $('#confirmDeleteModal').modal('show');
         
-        // Jika tombol konfirmasi diklik
         $('#confirmDeleteBtn').off('click').on('click', function() {
             $.ajax({
-                url: 'hapus_dosen.php', // Buat file ini untuk handle penghapusan
+                url: 'hapus_dosen.php',
                 method: 'GET',
                 data: { delete_npp: deleteNpp },
                 dataType: 'json',
                 success: function(response) {
                     $('#confirmDeleteModal').modal('hide');
+                    
                     if (response.status === 'success') {
+                        $('#successDeleteModal .modal-body').text(response.message);
                         $('#successDeleteModal').modal('show');
-                        $('#successDeleteModal').on('hidden.bs.modal', function () {
-                            location.reload();
+                        
+                        $row.remove();
+                        
+                        $('.table tbody tr').each(function(index) {
+                            $(this).find('td:first').text(index + 1);
                         });
                     } else {
-                        alert(response.message);
+                        $('#errorDeleteModal .modal-body').text(response.message);
+                        $('#errorDeleteModal').modal('show');
                     }
                 },
-                error: function() {
-                    alert('Terjadi kesalahan saat menghapus data.');
+                error: function(xhr, status, error) {
+                    $('#confirmDeleteModal').modal('hide');
+                    
+                    // Debugging: Log full response text
+                    console.log('Full response text:', xhr.responseText);
+                    
+                    $('#errorDeleteModal .modal-body').text('Terjadi kesalahan: ' + xhr.responseText);
+                    $('#errorDeleteModal').modal('show');
                 }
             });
         });
