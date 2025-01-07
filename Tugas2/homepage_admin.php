@@ -84,6 +84,9 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                 case 'tambah_mahasiswa':
                     pageUrl = 'tambah_mahasiswa.php';
                     break;
+                case 'tambah_dosen':
+                    pageUrl = 'tambah_dosen.php';
+                    break;
                 case 'cari_mahasiswa':
                     pageUrl = 'cari_mahasiswa.php'; // Halaman untuk Cari Mahasiswa
                     break;
