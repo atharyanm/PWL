@@ -193,23 +193,25 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 $('#confirmDeleteModal').modal('hide');
-                if (response.status === 'success') {
-                    $('#successModal').modal('show');
-                    loadPage('data_matkul');
-                } else {
-                    $('#errorMessage').text(response.message);
-                    $('#errorModal').modal('show');
-                }
+                setTimeout(function() {
+                    if (response.status === 'success') {
+                        $('#successModal').modal('show');
+                    } else {
+                        $('#errorMessage').text(response.message);
+                        $('#errorModal').modal('show');
+                    }
+                }, 500);
             },
-            error: function() {
+            error: function(xhr, status, error) {
                 $('#confirmDeleteModal').modal('hide');
-                $('#errorMessage').text('Terjadi kesalahan sistem');
+                $('#errorMessage').text('Terjadi kesalahan sistem: ' + error);
                 $('#errorModal').modal('show');
             }
         });
     });
 
-    $('#successModal, #errorModal').on('hidden.bs.modal', function () {
+    // Single modal hidden handler
+    $('#successModal').on('hidden.bs.modal', function () {
         loadPage('data_matkul');
     });
 });
