@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <label class="form-label">Password</label>
                 <input type="password" name="passw" class="form-control" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
+            <button type="submit" class="btn btn-secondary w-100">Login</button>
         </form>
     </div>
 </div>

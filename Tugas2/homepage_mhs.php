@@ -36,7 +36,7 @@ $mahasiswa = $result->fetch_assoc();
             overflow: hidden;
         }
         .profile-header {
-            background-color: #007bff;
+            background-color:rgb(71, 69, 69);
             color: white;
             padding: 20px;
             text-align: center;
@@ -58,7 +58,7 @@ $mahasiswa = $result->fetch_assoc();
             align-items: center;
         }
         .profile-detail i {
-            color: #007bff;
+            color:rgb(95, 96, 97);
             margin-right: 15px;
             width: 25px;
             text-align: center;
