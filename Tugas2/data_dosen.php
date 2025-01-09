@@ -76,8 +76,8 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
                                     class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <button class="btn btn-danger btn-sm btn-hapus" 
-                                        data-npp="<?php echo $row['npp']; ?>">
+                                <button type="button" class="btn btn-danger btn-sm btn-hapus" 
+                                        data-npp="<?= $row['npp'] ?>">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </div>
@@ -112,18 +112,18 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
     </nav>
 </div>
 
-<!-- Modal Konfirmasi Hapus -->
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-warning">
+            <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title">Konfirmasi Hapus</h5>
-                <button type="button" class="close" data-dismiss="modal">
+                <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Apakah Anda yakin ingin menghapus data dosen?
+                Apakah Anda yakin ingin menghapus data dosen ini?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
@@ -133,91 +133,79 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
     </div>
 </div>
 
-<!-- Modal Sukses -->
-<div class="modal fade" id="successDeleteModal" tabindex="-1" role="dialog">
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-success">
-                <h5 class="modal-title">Berhasil</h5>
-                <button type="button" class="close" data-dismiss="modal">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Sukses</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Data dosen berhasil dihapus
+                Data dosen berhasil dihapus!
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Error -->
-<div class="modal fade" id="errorDeleteModal" tabindex="-1" role="dialog">
+<!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-danger">
-                <h5 class="modal-title">Gagal Menghapus</h5>
-                <button type="button" class="close" data-dismiss="modal">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Error</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
                     <span>&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Pesan error akan diisi dinamis -->
+                <p id="errorMessage"></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">OK</button>
             </div>
         </div>
     </div>
 </div>
-
 <script>
-$(document).ready(function() {
-    // Fungsi load page dengan parameter opsional
-    function loadPage(page, param = null) {
-        $.ajax({
-            url: page + '.php',
-            method: 'GET',
-            data : { 
-                page: param  // Kirim parameter halaman
-            },
-            success: function(response) {
-                $('#contentPage').html(response);
-            },
-            error: function() {
-                alert('Gagal memuat halaman');
-            }
-        });
-    }
+$(document).ready(function () {
+    // Event listener untuk tombol hapus
+    $('.btn-hapus').on('click', function () {
+        const npp = $(this).data('npp'); // Ambil NPP dosen yang akan dihapus
+        $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
 
-    // Konfirmasi Hapus
-    let nppToDelete;
-    $('#dosenTable').on('click', '.btn-hapus', function() {
-        nppToDelete = $(this).data('npp');
-        $('#confirmDeleteModal').modal('show');
-    });
-
-    $('#confirmDeleteBtn').on('click', function() {
-        $.ajax({
-            url: 'proses_hapus_dosen.php',
-            method: 'POST',
-            data: { npp: nppToDelete },
-            success: function(response) {
-                $('#confirmDeleteModal').modal('hide');
-                if (response.status === 'success') {
-                    $('#successDeleteModal').modal('show');
-                    loadPage('data_dosen'); // Refresh data
-                } else {
-                    $('#errorDeleteModal .modal-body').text(response.message);
-                    $('#errorDeleteModal').modal('show');
+        // Konfirmasi penghapusan
+        $('#confirmDeleteBtn').off('click').on('click', function () {
+            $.ajax({
+                url: 'hapus_dosen.php',
+                method: 'POST',
+                data: { npp: npp },
+                dataType: 'json',
+                success: function (response) {
+                    $('#confirmDeleteModal').modal('hide'); // Tutup modal konfirmasi
+                    if (response.status === 'success') {
+                        $('#successModal').modal('show'); // Tampilkan modal sukses
+                        $('#successModal').on('hidden.bs.modal', function () {
+                            location.reload(); // Reload halaman penuh
+                        });
+                    } else {
+                        $('#errorMessage').text(response.message); // Tampilkan pesan error
+                        $('#errorModal').modal('show');
+                    }
+                },
+                error: function () {
+                    $('#errorMessage').text('Terjadi kesalahan saat menghapus data.'); // Tampilkan pesan error
+                    $('#errorModal').modal('show');
                 }
-            },
-            error: function() {
-                alert('Gagal menghapus data');
-            }
+            });
         });
     });
 });
 </script>
+
+

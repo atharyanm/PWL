@@ -93,6 +93,10 @@ function loadPage(page) {
         const npp = page.split('&')[1].split('=')[1];
         pageUrl = `edit_dosen.php?npp=${npp}`;
     }
+    else if (page.startsWith('edit_matkul')) {
+        const kode = page.split('&')[1].split('=')[1];
+        pageUrl = `edit_matkul.php?kode=${kode}`;
+    }
     else {
         switch (page) {
             case 'dashboard':
@@ -106,6 +110,12 @@ function loadPage(page) {
                 break;
             case 'tambah_dosen':
                 pageUrl = 'tambah_dosen.php';
+                break;
+            case 'tambah_matkul':
+                pageUrl = 'tambah_matkul.php';
+                break;
+            case 'tambah_kultawar':
+                pageUrl = 'tambah_kultawar.php';
                 break;
             case 'data_dosen':
                 pageUrl = 'data_dosen.php';
