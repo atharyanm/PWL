@@ -27,7 +27,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
     <div class="sidebar">
         <h2><i class="fas fa-user-shield"></i> Menu Admin</h2>
         <a href="#" onclick="loadPage('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a href="#" onclick="loadPage('data_mahasiswa')"><i class="fas fa-user-graduate"></i> Data Mahasiswa</a>
+        <a href="#" onclick="loadPage('data_mahasiswa')"><i class="fas fa-users"></i> Data Mahasiswa</a>
         <a href="#" onclick="loadPage('data_dosen')"><i class="	fas fa-chalkboard-teacher"></i> Data Dosen</a>
         <a href="#" onclick="loadPage('data_matkul')"><i class="fas fa-book"></i> Mata Kuliah</a>
         <a href="#" onclick="loadPage('matakuliah_tawar')"><i class="fas fa-book-open"></i> Mata Kuliah Tawar</a>
