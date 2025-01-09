@@ -61,7 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             <label for="foto_profil">Foto Profil:</label>
             <input type="file" class="form-control-file" id="foto_profil" name="foto_profil" accept="image/*">
         </div>
-        <button type="submit" class="btn btn-primary">Tambah Mahasiswa</button>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Simpan
+        </button>
+        <button type="button" class="btn btn-danger" onclick="loadPage('data_mahasiswa')">
+            <i class="fas fa-times"></i> Batal
+        </button>
     </form>
 </div>
 

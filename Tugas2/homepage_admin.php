@@ -29,7 +29,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
         <a href="#" onclick="loadPage('dashboard')"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
         <a href="#" onclick="loadPage('data_mahasiswa')"><i class="fas fa-user-graduate"></i> Data Mahasiswa</a>
         <a href="#" onclick="loadPage('data_dosen')"><i class="	fas fa-chalkboard-teacher"></i> Data Dosen</a>
-        <a href="#" onclick="loadPage('matakuliah')"><i class="fas fa-book"></i> Mata Kuliah</a>
+        <a href="#" onclick="loadPage('data_matkul')"><i class="fas fa-book"></i> Mata Kuliah</a>
         <a href="#" onclick="loadPage('matakuliah_tawar')"><i class="fas fa-book-open"></i> Mata Kuliah Tawar</a>
         <!-- <a href="#" onclick="loadPage('cari_mahasiswa')"><i class="fas fa-search"></i> Cari Mahasiswa</a>
         <a href="#" onclick="loadPage('cari_dosen')"><i class="fas fa-search"></i> Cari Dosen</a> -->
@@ -120,7 +120,7 @@ function loadPage(page) {
             case 'data_dosen':
                 pageUrl = 'data_dosen.php';
                 break;
-            case 'matakuliah':
+            case 'data_matkul':
                 pageUrl = 'data_matkul.php';
                 break;
             case 'matakuliah_tawar':
@@ -131,6 +131,9 @@ function loadPage(page) {
                 break;
             case 'cari_dosen':
                 pageUrl = 'cari_dosen.php';
+                break;
+            case 'cari_matkul':
+                pageUrl = 'cari_matkul.php';
                 break;
             default:
                 pageUrl = 'default_dashboard.php';

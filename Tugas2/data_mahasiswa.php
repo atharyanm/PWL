@@ -243,39 +243,39 @@ function loadPaginatedData(page) {
     });
 }
 
-function bindDeleteButtons() {
-    $('.btn-hapus').on('click', function() {
-        const deleteId = $(this).data('id');
+// function bindDeleteButtons() {
+//     $('.btn-hapus').on('click', function() {
+//         const deleteId = $(this).data('id');
         
-        // Tampilkan modal konfirmasi hapus
-        $('#confirmDeleteModal').modal('show');
+//         // Tampilkan modal konfirmasi hapus
+//         $('#confirmDeleteModal').modal('show');
         
-        // Jika tombol konfirmasi diklik
-        $('#confirmDeleteBtn').off('click').on('click', function() {
-            $.ajax({
-                url: 'hapus_mahasiswa.php',
-                method: 'GET',
-                data: { delete_id: deleteId },
-                dataType: 'json',
-                success: function(response) {
-                    $('#confirmDeleteModal').modal('hide');
-                    if (response.status === 'success') {
-                        $('#successDeleteModal').modal('show');
-                        $('#successDeleteModal').on('hidden.bs.modal', function () {
-                            // Muat ulang halaman pertama setelah hapus
-                            loadPaginatedData(1);
-                        });
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function() {
-                    alert('Terjadi kesalahan saat menghapus data.');
-                }
-            });
-        });
-    });
-}
+//         // Jika tombol konfirmasi diklik
+//         $('#confirmDeleteBtn').off('click').on('click', function() {
+//             $.ajax({
+//                 url: 'hapus_mahasiswa.php',
+//                 method: 'GET',
+//                 data: { delete_id: deleteId },
+//                 dataType: 'json',
+//                 success: function(response) {
+//                     $('#confirmDeleteModal').modal('hide');
+//                     if (response.status === 'success') {
+//                         $('#successDeleteModal').modal('show');
+//                         $('#successDeleteModal').on('hidden.bs.modal', function () {
+//                             // Muat ulang halaman pertama setelah hapus
+//                             loadPaginatedData(1);
+//                         });
+//                     } else {
+//                         alert(response.message);
+//                     }
+//                 },
+//                 error: function() {
+//                     alert('Terjadi kesalahan saat menghapus data.');
+//                 }
+//             });
+//         });
+//     });
+// }
 
 $(document).ready(function() {
     // Inisialisasi event handler tombol hapus

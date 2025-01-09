@@ -27,7 +27,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <a href="#" onclick="loadPage('data_mahasiswa')" class="btn btn-primary mb-4">
+            <a href="#" onclick="loadPage('data_mahasiswa')" class="btn btn-secondary mb-4">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             <h2 class="mb-4">
@@ -69,6 +69,45 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
     </div>
 </div>
 
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus data mahasiswa ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Sukses</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Data mahasiswa berhasil dihapus!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Bootstrap JS -->
@@ -78,10 +117,11 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 
 <script>
 $(document).ready(function() {
-    // Fungsi Pencarian
+    let idToDelete;
+
+    // Search functionality
     $('#searchForm').on('submit', function(event) {
         event.preventDefault();
-
         let searchTerm = $('#searchTerm').val();
         let searchBy = $('#searchBy').val();
 
@@ -93,7 +133,6 @@ $(document).ready(function() {
                 searchBy: searchBy 
             },
             beforeSend: function() {
-                // Tampilkan loading
                 $('#searchResults').html(`
                     <div class="text-center">
                         <div class="spinner-border text-primary" role="status">
@@ -106,65 +145,48 @@ $(document).ready(function() {
                 $('#searchResults').html(response);
             },
             error: function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Terjadi kesalahan saat mencari data!'
-                });
+                $('#errorMessage').text('Terjadi kesalahan saat mencari data.');
+                $('#errorModal').modal('show');
             }
         });
     });
 
-    // Delegasi Event untuk Tombol Hapus
+    // Delete handling
     $(document).on('click', '.btn-hapus', function() {
-        let id = $(this).data('id');
-        
-        Swal.fire({
-            title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus data mahasiswa ini?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: 'hapus_mahasiswa.php',
-                    type: 'POST',
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            // Hapus baris dari tabel
-                            $('#row-' + id).fadeOut(500, function() {
-                                $(this).remove();
-                            });
-                            
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: response.message
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Terjadi kesalahan saat menghapus data!'
-                        });
-                    }
-                });
+        idToDelete = $(this).data('id');
+        $('#confirmDeleteModal').modal('show');
+    });
+
+    $('#confirmDeleteBtn').on('click', function() {
+        $.ajax({
+            url: 'hapus_mahasiswa.php',
+            type: 'GET', // Changed to GET to match hapus_mahasiswa.php
+            data: { delete_id: idToDelete }, // Changed to match parameter name
+            dataType: 'json',
+            success: function(response) {
+                $('#confirmDeleteModal').modal('hide');
+                if (response.status === 'success') {
+                    setTimeout(function() {
+                        $('#successDeleteModal').modal('show');
+                        // Refresh search results after successful delete
+                        $('#searchForm').submit();
+                    }, 500);
+                } else {
+                    $('#errorMessage').text(response.message);
+                    $('#errorModal').modal('show');
+                }
+            },
+            error: function() {
+                $('#confirmDeleteModal').modal('hide');
+                $('#errorMessage').text('Terjadi kesalahan saat menghapus data.');
+                $('#errorModal').modal('show');
             }
         });
+    });
+
+    // Refresh search results after success modal is closed
+    $('#successDeleteModal').on('hidden.bs.modal', function() {
+        $('#searchForm').submit();
     });
 });
 </script>

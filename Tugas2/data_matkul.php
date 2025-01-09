@@ -8,7 +8,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 require 'koneksi.php';
 
 // Pagination setup
-$limit = 10;
+$limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 

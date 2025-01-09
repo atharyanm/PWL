@@ -68,8 +68,12 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                                class="form-control" required>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="data_dosen.php" class="btn btn-secondary">Kembali</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="loadPage('data_dosen')">
+                        <i class="fas fa-times"></i> Batal
+                    </button>
                 </form>
             </div>
         </div>

@@ -27,7 +27,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 <div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12">
-            <a href="#" onclick="loadPage('data_dosen')" class="btn btn-primary mb-4">
+            <a href="#" onclick="loadPage('data_dosen')" class="btn btn-secondary mb-4">
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             <h2 class="mb-4">
@@ -70,6 +70,45 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
     </div>
 </div>
 
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Konfirmasi Hapus</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Apakah Anda yakin ingin menghapus data dosen ini?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successDeleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Sukses</h5>
+                <button type="button" class="close text-white" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Data dosen berhasil dihapus!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Bootstrap JS -->
@@ -81,6 +120,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 $(document).ready(function() {
     // Fungsi Pencarian
     $('#searchForm').on('submit', function(event) {
+        let nppToDelete;
         event.preventDefault();
 
         let searchTerm = $('#searchTerm').val();
@@ -118,54 +158,38 @@ $(document).ready(function() {
 
     // Delegasi Event untuk Tombol Hapus
     $(document).on('click', '.btn-hapus', function() {
-        let npp = $(this).data('npp');
-        
-        Swal.fire({
-            title: 'Konfirmasi Hapus',
-            text: 'Apakah Anda yakin ingin menghapus data dosen ini?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#3085d6',
-            confirmButtonText: 'Hapus',
-            cancelButtonText: 'Batal'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: 'hapus_dosen.php',
-                    type: 'POST',
-                    data: { npp: npp },
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            // Hapus baris dari tabel
-                            $('#row-' + npp).fadeOut(500, function() {
-                                $(this).remove();
-                            });
-                            
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Berhasil!',
-                                text: response.message
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Gagal!',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Terjadi kesalahan saat menghapus data!'
-                        });
-                    }
-                });
+        nppToDelete = $(this).data('npp');
+        $('#confirmDeleteModal').modal('show');
+    });
+
+    $('#confirmDeleteBtn').on('click', function() {
+        $.ajax({
+            url: 'hapus_dosen.php',
+            type: 'POST',
+            data: { npp: nppToDelete },
+            dataType: 'json',
+            success: function(response) {
+                $('#confirmDeleteModal').modal('hide');
+                if (response.status === 'success') {
+                    setTimeout(function() {
+                        $('#successDeleteModal').modal('show');
+                    }, 500);
+                } else {
+                    $('#errorMessage').text(response.message);
+                    $('#errorModal').modal('show');
+                }
+            },
+            error: function() {
+                $('#confirmDeleteModal').modal('hide');
+                $('#errorMessage').text('Terjadi kesalahan saat menghapus data.');
+                $('#errorModal').modal('show');
             }
         });
+    });
+
+    // Refresh search results after successful delete
+    $('#successDeleteModal').on('hidden.bs.modal', function() {
+        $('#searchForm').submit();
     });
 });
 </script>

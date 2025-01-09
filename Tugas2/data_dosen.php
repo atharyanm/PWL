@@ -190,9 +190,9 @@ $(document).ready(function () {
                     $('#confirmDeleteModal').modal('hide'); // Tutup modal konfirmasi
                     if (response.status === 'success') {
                         $('#successModal').modal('show'); // Tampilkan modal sukses
-                        $('#successModal').on('hidden.bs.modal', function () {
-                            location.reload(); // Reload halaman penuh
-                        });
+                        // $('#successModal').on('hidden.bs.modal', function () {
+                        //     location.reload(); // Reload halaman penuh
+                        // });
                     } else {
                         $('#errorMessage').text(response.message); // Tampilkan pesan error
                         $('#errorModal').modal('show');
@@ -204,6 +204,9 @@ $(document).ready(function () {
                 }
             });
         });
+    });
+    $('#successModal').on('hidden.bs.modal', function () {
+        loadPage('data_dosen');
     });
 });
 </script>
