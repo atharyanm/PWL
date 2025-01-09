@@ -105,19 +105,19 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
     <ul class="pagination justify-content-center">
         <?php if ($page > 1): ?>
             <li class="page-item">
-                <a class="page-link" href="?page=<?php echo $page - 1; ?>">Sebelumnya</a>
+                <a class="page-link" href="#" onclick="loadPage('data_mahasiswa', '<?= $page-1 ?>')">Sebelumnya</a>
             </li>
         <?php endif; ?>
 
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
-                <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                <a class="page-link" href="#" onclick="loadPage('data_mahasiswa', '<?= $i ?>')"><?= $i ?></a>
             </li>
         <?php endfor; ?>
 
         <?php if ($page < $total_pages): ?>
             <li class="page-item">
-                <a class="page-link" href="?page=<?php echo $page + 1; ?>">Selanjutnya</a>
+                <a class="page-link" href="#" onclick="loadPage('data_mahasiswa', '<?= $page+1 ?>')">Selanjutnya</a>
             </li>
         <?php endif; ?>
     </ul>
@@ -188,14 +188,11 @@ $result = $koneksi->query("SELECT * FROM mahasiswa LIMIT $start, $limit");
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Menangani klik pada tombol hapus dengan modal konfirmasi
+    // Delete button handler
     $('.btn-hapus').on('click', function() {
         const deleteId = $(this).data('id');
-        
-        // Tampilkan modal konfirmasi hapus
         $('#confirmDeleteModal').modal('show');
         
-        // Jika tombol konfirmasi diklik
         $('#confirmDeleteBtn').off('click').on('click', function() {
             $.ajax({
                 url: 'hapus_mahasiswa.php',
@@ -203,11 +200,11 @@ $(document).ready(function() {
                 data: { delete_id: deleteId },
                 dataType: 'json',
                 success: function(response) {
-                    $('#confirmDeleteModal').modal('hide'); // Sembunyikan modal konfirmasi hapus
+                    $('#confirmDeleteModal').modal('hide');
                     if (response.status === 'success') {
-                        $('#successDeleteModal').modal('show'); // Tampilkan modal berhasil hapus
-                        $('#successDeleteModal').on('hidden.bs.modal', function () {
-                            location.reload(); // Reload halaman setelah modal ditutup
+                        $('#successDeleteModal').modal('show');
+                        $('#successDeleteModal').on('hidden.bs.modal', function() {
+                            loadPaginatedData(1);
                         });
                     } else {
                         alert(response.message);
@@ -219,87 +216,78 @@ $(document).ready(function() {
             });
         });
     });
+
+    // Pagination handler
+    $(document).on('click', '.pagination .page-link', function(e) {
+        e.preventDefault();
+        if ($(this).closest('li').hasClass('active')) return;
+
+        let page;
+        const text = $(this).text();
+        const currentPage = parseInt($('.pagination .active .page-link').text());
+
+        if (text === 'Sebelumnya') {
+            page = currentPage - 1;
+        } else if (text === 'Selanjutnya') {
+            page = currentPage + 1;
+        } else {
+            page = parseInt(text);
+        }
+
+        loadPaginatedData(page);
+    });
 });
+
 function loadPaginatedData(page) {
     $.ajax({
         url: 'data_mahasiswa.php',
         method: 'GET',
         data: { page: page },
+        beforeSend: function() {
+            $('table, .pagination').addClass('opacity-50');
+        },
         success: function(response) {
-            // Ekstrak tabel dan pagination dari response
-            var $newTable = $(response).find('table');
-            var $newPagination = $(response).find('nav');
+            const $newContent = $(response);
+            $('table').replaceWith($newContent.find('table'));
+            $('.pagination').replaceWith($newContent.find('.pagination'));
             
-            // Ganti konten tabel dan pagination
-            $('table').replaceWith($newTable);
-            $('nav').replaceWith($newPagination);
-            
-            // Tambahkan event listener baru untuk tombol hapus
-            bindDeleteButtons();
+            // Rebind delete buttons
+            $('.btn-hapus').off('click').on('click', function() {
+                const deleteId = $(this).data('id');
+                $('#confirmDeleteModal').modal('show');
+                
+                $('#confirmDeleteBtn').off('click').on('click', function() {
+                    $.ajax({
+                        url: 'hapus_mahasiswa.php',
+                        method: 'GET',
+                        data: { delete_id: deleteId },
+                        dataType: 'json',
+                        success: function(response) {
+                            $('#confirmDeleteModal').modal('hide');
+                            if (response.status === 'success') {
+                                $('#successDeleteModal').modal('show');
+                                $('#successDeleteModal').on('hidden.bs.modal', function() {
+                                    loadPaginatedData(1);
+                                });
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function() {
+                            alert('Terjadi kesalahan saat menghapus data.');
+                        }
+                    });
+                });
+            });
         },
         error: function() {
             alert('Gagal memuat data');
+        },
+        complete: function() {
+            $('table, .pagination').removeClass('opacity-50');
         }
     });
 }
-
-// function bindDeleteButtons() {
-//     $('.btn-hapus').on('click', function() {
-//         const deleteId = $(this).data('id');
-        
-//         // Tampilkan modal konfirmasi hapus
-//         $('#confirmDeleteModal').modal('show');
-        
-//         // Jika tombol konfirmasi diklik
-//         $('#confirmDeleteBtn').off('click').on('click', function() {
-//             $.ajax({
-//                 url: 'hapus_mahasiswa.php',
-//                 method: 'GET',
-//                 data: { delete_id: deleteId },
-//                 dataType: 'json',
-//                 success: function(response) {
-//                     $('#confirmDeleteModal').modal('hide');
-//                     if (response.status === 'success') {
-//                         $('#successDeleteModal').modal('show');
-//                         $('#successDeleteModal').on('hidden.bs.modal', function () {
-//                             // Muat ulang halaman pertama setelah hapus
-//                             loadPaginatedData(1);
-//                         });
-//                     } else {
-//                         alert(response.message);
-//                     }
-//                 },
-//                 error: function() {
-//                     alert('Terjadi kesalahan saat menghapus data.');
-//                 }
-//             });
-//         });
-//     });
-// }
-
-$(document).ready(function() {
-    // Inisialisasi event handler tombol hapus
-    bindDeleteButtons();
-
-    // Handler untuk pagination
-    $(document).on('click', '.pagination .page-link', function(e) {
-        e.preventDefault();
-        
-        // Hindari reload jika mengklik halaman aktif saat ini
-        if ($(this).closest('li').hasClass('active')) return;
-
-        var page = $(this).text();
-        
-        // Cek jika tombol sebelumnya/selanjutnya
-        if ($(this).text() === 'Sebelumnya') {
-            page = parseInt($('.pagination .active .page-link').text()) - 1;
-        } else if ($(this).text() === 'Selanjutnya') {
-            page = parseInt($('.pagination .active .page-link').text()) + 1;
-        }
-        
-        loadPaginatedData(page);
-    });
-});
 </script>
 
 <?php

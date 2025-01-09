@@ -90,26 +90,26 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
 
     <!-- Pagination -->
     <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center">
-            <?php if ($page > 1): ?>
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPage('data_dosen', '<?php echo $page-1; ?>')">Sebelumnya</a>
-                </li>
-            <?php endif; ?>
+    <ul class="pagination justify-content-center">
+        <?php if ($page > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page-1 ?>)">Sebelumnya</a>
+            </li>
+        <?php endif; ?>
 
-            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                <li class="page-item <?php echo ($page == $i) ? 'active' : ''; ?>">
-                    <a class="page-link" href="#" onclick="loadPage('data_dosen', '<?php echo $i; ?>')"><?php echo $i; ?></a>
-                </li>
-            <?php endfor; ?>
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <li class="page-item <?= ($page == $i) ? 'active' : '' ?>">
+                <a class="page-link" href="#" onclick="loadPaginatedData(<?= $i ?>)"><?= $i ?></a>
+            </li>
+        <?php endfor; ?>
 
-            <?php if ($page < $total_pages): ?>
-                <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPage('data_dosen', '<?php echo $page+1; ?>')">Selanjutnya</a>
-                </li>
-            <?php endif; ?>
-        </ul>
-    </nav>
+        <?php if ($page < $total_pages): ?>
+            <li class="page-item">
+                <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page+1 ?>)">Selanjutnya</a>
+            </li>
+        <?php endif; ?>
+    </ul>
+</nav>
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -173,41 +173,93 @@ $result = $koneksi->query("SELECT * FROM dosen LIMIT $start, $limit");
     </div>
 </div>
 <script>
-$(document).ready(function () {
-    // Event listener untuk tombol hapus
-    $('.btn-hapus').on('click', function () {
-        const npp = $(this).data('npp'); // Ambil NPP dosen yang akan dihapus
-        $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
+$(document).ready(function() {
+    // Initialize delete handlers
+    bindDeleteButtons();
 
-        // Konfirmasi penghapusan
-        $('#confirmDeleteBtn').off('click').on('click', function () {
+    // Pagination handler
+    $(document).on('click', '.pagination .page-link', function(e) {
+        e.preventDefault();
+        if ($(this).closest('li').hasClass('active')) return;
+
+        let page;
+        const text = $(this).text();
+        const currentPage = parseInt($('.pagination .active .page-link').text());
+
+        if (text === 'Sebelumnya') {
+            page = currentPage - 1;
+        } else if (text === 'Selanjutnya') {
+            page = currentPage + 1;
+        } else {
+            page = parseInt(text);
+        }
+
+        loadPaginatedData(page);
+    });
+});
+
+function bindDeleteButtons() {
+    $('.btn-hapus').off('click').on('click', function() {
+        const npp = $(this).data('npp');
+        $('#confirmDeleteModal').modal('show');
+
+        $('#confirmDeleteBtn').off('click').on('click', function() {
             $.ajax({
                 url: 'hapus_dosen.php',
                 method: 'POST',
                 data: { npp: npp },
                 dataType: 'json',
-                success: function (response) {
-                    $('#confirmDeleteModal').modal('hide'); // Tutup modal konfirmasi
+                success: function(response) {
+                    $('#confirmDeleteModal').modal('hide');
                     if (response.status === 'success') {
-                        $('#successModal').modal('show'); // Tampilkan modal sukses
-                        // $('#successModal').on('hidden.bs.modal', function () {
-                        //     location.reload(); // Reload halaman penuh
-                        // });
+                        setTimeout(function() {
+                            $('#successModal').modal('show');
+                        }, 500);
                     } else {
-                        $('#errorMessage').text(response.message); // Tampilkan pesan error
+                        $('#errorMessage').text(response.message);
                         $('#errorModal').modal('show');
                     }
                 },
-                error: function () {
-                    $('#errorMessage').text('Terjadi kesalahan saat menghapus data.'); // Tampilkan pesan error
+                error: function() {
+                    $('#confirmDeleteModal').modal('hide');
+                    $('#errorMessage').text('Terjadi kesalahan sistem');
                     $('#errorModal').modal('show');
                 }
             });
         });
     });
-    $('#successModal').on('hidden.bs.modal', function () {
-        loadPage('data_dosen');
+}
+
+function loadPaginatedData(page) {
+    $.ajax({
+        url: 'data_dosen.php',
+        method: 'GET',
+        data: { page: page },
+        beforeSend: function() {
+            $('table, .pagination').addClass('opacity-50');
+        },
+        success: function(response) {
+            const $newContent = $(response);
+            $('table').replaceWith($newContent.find('table'));
+            $('.pagination').replaceWith($newContent.find('.pagination'));
+            bindDeleteButtons();
+        },
+        error: function() {
+            alert('Gagal memuat data');
+        },
+        complete: function() {
+            $('table, .pagination').removeClass('opacity-50');
+        }
     });
+}
+
+// Modal events
+$('#successModal').on('hidden.bs.modal', function() {
+    loadPaginatedData(1);
+});
+
+$('#errorModal').on('hidden.bs.modal', function() {
+    loadPaginatedData(1);
 });
 </script>
 

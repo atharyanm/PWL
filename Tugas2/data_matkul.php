@@ -178,41 +178,91 @@ $result = $koneksi->query("SELECT * FROM matkul ORDER BY idmatkul LIMIT $start, 
 
 <script>
 $(document).ready(function() {
-    let kodeToDelete;
-    
-    $('.btn-hapus').on('click', function() {
-        kodeToDelete = $(this).data('kode');
-        $('#confirmDeleteModal').modal('show');
-    });
+    // Initialize delete handlers
+    bindDeleteButtons();
 
-    $('#confirmDeleteBtn').on('click', function() {
-        $.ajax({
-            url: 'hapus_matkul.php',
-            method: 'POST',
-            data: { idmatkul: kodeToDelete },
-            dataType: 'json',
-            success: function(response) {
-                $('#confirmDeleteModal').modal('hide');
-                setTimeout(function() {
+    // Pagination handler
+    $(document).on('click', '.pagination .page-link', function(e) {
+        e.preventDefault();
+        if ($(this).closest('li').hasClass('active')) return;
+
+        let page;
+        const text = $(this).text();
+        const currentPage = parseInt($('.pagination .active .page-link').text());
+
+        if (text === 'Previous') {
+            page = currentPage - 1;
+        } else if (text === 'Next') {
+            page = currentPage + 1;
+        } else {
+            page = parseInt(text);
+        }
+
+        loadPaginatedData(page);
+    });
+});
+
+function bindDeleteButtons() {
+    $('.btn-hapus').off('click').on('click', function() {
+        const kodeToDelete = $(this).data('kode');
+        $('#confirmDeleteModal').modal('show');
+
+        $('#confirmDeleteBtn').off('click').on('click', function() {
+            $.ajax({
+                url: 'hapus_matkul.php',
+                method: 'POST',
+                data: { idmatkul: kodeToDelete },
+                dataType: 'json',
+                success: function(response) {
+                    $('#confirmDeleteModal').modal('hide');
                     if (response.status === 'success') {
-                        $('#successModal').modal('show');
+                        setTimeout(function() {
+                            $('#successModal').modal('show');
+                        }, 500);
                     } else {
                         $('#errorMessage').text(response.message);
                         $('#errorModal').modal('show');
                     }
-                }, 500);
-            },
-            error: function(xhr, status, error) {
-                $('#confirmDeleteModal').modal('hide');
-                $('#errorMessage').text('Terjadi kesalahan sistem: ' + error);
-                $('#errorModal').modal('show');
-            }
+                },
+                error: function(xhr, status, error) {
+                    $('#confirmDeleteModal').modal('hide');
+                    $('#errorMessage').text('Terjadi kesalahan sistem: ' + error);
+                    $('#errorModal').modal('show');
+                }
+            });
         });
     });
+}
 
-    // Single modal hidden handler
-    $('#successModal').on('hidden.bs.modal', function () {
-        loadPage('data_matkul');
+function loadPaginatedData(page) {
+    $.ajax({
+        url: 'data_matkul.php',
+        method: 'GET',
+        data: { page: page },
+        beforeSend: function() {
+            $('table, .pagination').addClass('opacity-50');
+        },
+        success: function(response) {
+            const $newContent = $(response);
+            $('table').replaceWith($newContent.find('table'));
+            $('.pagination').replaceWith($newContent.find('.pagination'));
+            bindDeleteButtons();
+        },
+        error: function() {
+            alert('Gagal memuat data');
+        },
+        complete: function() {
+            $('table, .pagination').removeClass('opacity-50');
+        }
     });
+}
+
+// Modal events
+$('#successModal').on('hidden.bs.modal', function() {
+    loadPaginatedData(1);
+});
+
+$('#errorModal').on('hidden.bs.modal', function() {
+    loadPaginatedData(1);
 });
 </script>
