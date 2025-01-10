@@ -17,8 +17,7 @@ $total_data = $total_result->fetch_assoc()['total'];
 $total_pages = ceil($total_data / $limit);
 
 // Query with joins and actual kelompok field
-$query = "SELECT mt.id_tawar, 
-          REPLACE(mt.kelompok, '.', '') as kelompok,
+$query = "SELECT mt.id_tawar, mt.kelompok,
           mt.hari, mt.jam, mt.ruang,
           m.namamatkul, d.namadosen 
           FROM matakuliah_tawar mt
