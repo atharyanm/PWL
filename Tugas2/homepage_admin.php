@@ -135,6 +135,9 @@ function loadPage(page) {
             case 'cari_matkul':
                 pageUrl = 'cari_matkul.php';
                 break;
+            case 'cari_matkul_tawar':
+                pageUrl = 'cari_matkul_tawar.php';
+                break;
             default:
                 pageUrl = 'default_dashboard.php';
         }

@@ -206,7 +206,7 @@ $(document).ready(function() {
         
         // Ambil digit ke-4 dan ke-5 dari kode matkul
         const kelompokDigits = number.substring(1, 3); // Mengambil '41' dari '54101'
-        const kelompokBase = prefix + '.' + kelompokDigits; // Menambahkan '01' di akhir
+        const kelompokBase = prefix + '.' + kelompokDigits;
         $('#kodeKelompok').val(kelompokBase);
         
         const timeSlots = generateTimeSlots(sks);
