@@ -196,22 +196,25 @@ $(document).ready(function() {
     }
 
     $('#idmatkul').change(function() {
-        const selectedMatkul = $(this).val();
-        const sks = $('option:selected', this).data('sks');
+    const selectedMatkul = $(this).val();
+    const sks = $('option:selected', this).data('sks');
+    
+    if(selectedMatkul) {
+        const parts = selectedMatkul.split('.');
+        const prefix = parts[0];  // Gets A12
+        const number = parts[1];  // Gets full number like 54101
         
-        if(selectedMatkul) {
-            const parts = selectedMatkul.split('.');
-            const prefix = parts[0];
-            const number = parts[1];
-            const kelompokBase = prefix + '.' + number.substring(2, 4);
-            $('#kodeKelompok').val(kelompokBase);
-            
-            const timeSlots = generateTimeSlots(sks);
-            const jamSelect = $('#jamKuliah');
-            jamSelect.empty().append('<option value="">Pilih Jam Kuliah</option>');
-            timeSlots.forEach(slot => jamSelect.append(`<option value="${slot}">${slot}</option>`));
-        }
-    });
+        // Ambil digit ke-4 dan ke-5 dari kode matkul
+        const kelompokDigits = number.substring(1, 3); // Mengambil '41' dari '54101'
+        const kelompokBase = prefix + '.' + kelompokDigits; // Menambahkan '01' di akhir
+        $('#kodeKelompok').val(kelompokBase);
+        
+        const timeSlots = generateTimeSlots(sks);
+        const jamSelect = $('#jamKuliah');
+        jamSelect.empty().append('<option value="">Pilih Jam Kuliah</option>');
+        timeSlots.forEach(slot => jamSelect.append(`<option value="${slot}">${slot}</option>`));
+    }
+});
 
     $('#formTambahJadwal').on('submit', function(e) {
         e.preventDefault();
