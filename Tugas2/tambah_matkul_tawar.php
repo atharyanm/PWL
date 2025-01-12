@@ -99,7 +99,7 @@ $ruang = range(1, 15);
                             <div class="input-group">
                                 <select name="gedung" class="form-control" required>
                                     <?php foreach($gedung as $g) { ?>
-                                        <option value="<?= $g ?>">Gedung <?= $g ?></option>
+                                        <option value="<?= $g ?>"> <?= $g ?></option>
                                     <?php } ?>
                                 </select>
                                 <div class="input-group-append">

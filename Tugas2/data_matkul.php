@@ -96,7 +96,7 @@ $result = $koneksi->query("SELECT * FROM matkul ORDER BY idmatkul LIMIT $start, 
         <ul class="pagination justify-content-center">
             <?php if ($page > 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPage('data_matkul', '<?= $page-1 ?>')">Previous</a>
+                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page-1 ?>)">Sebelumnya</a>
                 </li>
             <?php endif; ?>
 
@@ -108,7 +108,7 @@ $result = $koneksi->query("SELECT * FROM matkul ORDER BY idmatkul LIMIT $start, 
 
             <?php if ($page < $total_pages): ?>
                 <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPage('data_matkul', '<?= $page+1 ?>')">Next</a>
+                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page+1 ?>)">Selanjutnya</a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -190,9 +190,9 @@ $(document).ready(function() {
         const text = $(this).text();
         const currentPage = parseInt($('.pagination .active .page-link').text());
 
-        if (text === 'Previous') {
+        if (text === 'Sebelumnya') {
             page = currentPage - 1;
-        } else if (text === 'Next') {
+        } else if (text === 'Selanjutnya') {
             page = currentPage + 1;
         } else {
             page = parseInt(text);

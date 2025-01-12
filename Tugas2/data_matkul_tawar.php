@@ -107,7 +107,7 @@ $result = $koneksi->query($query);
         <ul class="pagination justify-content-center">
             <?php if ($page > 1): ?>
                 <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page-1 ?>)">Previous</a>
+                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page-1 ?>)">Sebelumnya</a>
                 </li>
             <?php endif; ?>
 
@@ -119,7 +119,7 @@ $result = $koneksi->query($query);
 
             <?php if ($page < $total_pages): ?>
                 <li class="page-item">
-                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page+1 ?>)">Next</a>
+                    <a class="page-link" href="#" onclick="loadPaginatedData(<?= $page+1 ?>)">Selanjutnya</a>
                 </li>
             <?php endif; ?>
         </ul>
@@ -192,6 +192,26 @@ $result = $koneksi->query($query);
 <script>
 $(document).ready(function() {
     bindDeleteButtons();
+
+    $(document).on('click', '.pagination .page-link', function(e) {
+        e.preventDefault();
+        if ($(this).closest('li').hasClass('active')) return;
+
+        let page;
+        const text = $(this).text();
+        const currentPage = parseInt($('.pagination .active .page-link').text());
+
+        if (text === 'Sebelumnya') {
+            page = currentPage - 1;
+        } else if (text === 'Selanjutnya') {
+            page = currentPage + 1;
+        } else {
+            page = parseInt(text);
+        }
+
+        loadPaginatedData(page);
+    });
+    
 });
 
 function bindDeleteButtons() {
@@ -229,12 +249,20 @@ function loadPaginatedData(page) {
         url: 'data_matkul_tawar.php',
         method: 'GET',
         data: { page: page },
+        beforeSend: function() {
+            $('table, .pagination').addClass('opacity-50');
+        },
         success: function(response) {
-            $('.container').html($(response).find('.container').html());
+            const $newContent = $(response);
+            $('table').replaceWith($newContent.find('table'));
+            $('.pagination').replaceWith($newContent.find('.pagination'));
             bindDeleteButtons();
         },
         error: function() {
             alert('Gagal memuat data');
+        },
+        complete: function() {
+            $('table, .pagination').removeClass('opacity-50');
         }
     });
 }
