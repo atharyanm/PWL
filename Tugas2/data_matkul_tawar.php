@@ -78,17 +78,19 @@ $result = $koneksi->query($query);
                         <td>
                             <div class="btn-group" role="group">
                                 <a href="#" 
-                                   onclick="loadPage('edit_matkul_tawar&id=<?= $row['id_tawar'] ?>')" 
-                                   class="btn btn-warning btn-sm">
+                                onclick="loadPage('edit_matkul_tawar&id=<?= $row['id_tawar'] ?>')" 
+                                class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
                                 <button type="button" 
                                         class="btn btn-danger btn-sm btn-hapus" 
-                                        data-id="<?= $row['id_tawar'] ?>">
+                                        data-id="<?= $row['id_tawar'] ?>"
+                                        onclick="hapusMatkulTawar(<?= $row['id_tawar'] ?>)">
                                     <i class="fas fa-trash"></i> Hapus
                                 </button>
                             </div>
                         </td>
+
                     </tr>
                 <?php 
                     }
@@ -127,7 +129,6 @@ $result = $koneksi->query($query);
 </div>
 
 <!-- Include modals -->
-<!-- Confirm Delete Modal -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -191,7 +192,7 @@ $result = $koneksi->query($query);
 
 <script>
 $(document).ready(function() {
-    bindDeleteButtons();
+    // hapusMatkulTawar();
 
     $(document).on('click', '.pagination .page-link', function(e) {
         e.preventDefault();
@@ -214,32 +215,30 @@ $(document).ready(function() {
     
 });
 
-function bindDeleteButtons() {
-    $('.btn-hapus').off('click').on('click', function() {
-        const idToDelete = $(this).data('id');
-        $('#confirmDeleteModal').modal('show');
+function hapusMatkulTawar(idTawar) {
+    $('#confirmDeleteModal').modal('show');
 
-        $('#confirmDeleteBtn').off('click').on('click', function() {
-            $.ajax({
-                url: 'hapus_matkul_tawar.php',
-                method: 'POST',
-                data: { id_tawar: idToDelete },
-                dataType: 'json',
-                success: function(response) {
-                    $('#confirmDeleteModal').modal('hide');
-                    if (response.status === 'success') {
-                        $('#successModal').modal('show');
-                    } else {
-                        $('#errorMessage').text(response.message);
-                        $('#errorModal').modal('show');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    $('#confirmDeleteModal').modal('hide');
-                    $('#errorMessage').text('Terjadi kesalahan sistem: ' + error);
+    $('#confirmDeleteBtn').off('click').on('click', function() {
+        $.ajax({
+            url: 'hapus_matkul_tawar.php',
+            method: 'POST',
+            data: { id_tawar: idTawar },
+            dataType: 'json',
+            success: function(response) {
+                $('#confirmDeleteModal').modal('hide');
+                if (response.status === 'success') {
+                    $('#successModal').modal('show');
+                    loadPaginatedData(1); // Reload halaman pertama
+                } else {
+                    $('#errorMessage').text(response.message);
                     $('#errorModal').modal('show');
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                $('#confirmDeleteModal').modal('hide');
+                $('#errorMessage').text('Terjadi kesalahan sistem: ' + error);
+                $('#errorModal').modal('show');
+            }
         });
     });
 }

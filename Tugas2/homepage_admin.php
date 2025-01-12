@@ -81,9 +81,16 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
 // Fungsi untuk memuat halaman dinamis
 function loadPage(page) {
     let pageUrl;
-
+    console.log('Loading page:', page);
     // Tentukan halaman yang dimuat berdasarkan nama
-    if (page.startsWith('edit_mahasiswa')) {
+    if (page.startsWith('edit_matkul_tawar')) {
+        const params = new URLSearchParams(page.split('&').slice(1).join('&'));
+        const id = params.get('id');
+        console.log('ID:', id); // Tambahkan ini
+        pageUrl = `edit_matkul_tawar.php?id=${id}`;
+    }
+
+    else if (page.startsWith('edit_mahasiswa')) {
         const params = new URLSearchParams(page.split('&').slice(1).join('&'));
         const id = params.get('id');
         pageUrl = `edit_mahasiswa.php?id=${id}`;
@@ -97,6 +104,12 @@ function loadPage(page) {
         const kode = page.split('&')[1].split('=')[1];
         pageUrl = `edit_matkul.php?kode=${kode}`;
     }
+    // else if (page.startsWith('edit_matkul_tawar')) {
+    //     const params = new URLSearchParams(page.split('&').slice(1).join('&'));
+    //     const id = params.get('id');
+    //     pageUrl = `edit_matkul_tawar.php?id=${id}`;
+    // }
+
     else {
         switch (page) {
             case 'dashboard':
