@@ -13,7 +13,7 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                 <i class="fas fa-arrow-left"></i> Kembali
             </a>
             <h2 class="mb-4">
-                <i class="fas fa-search"></i> Pencarian Jadwal Mata Kuliah
+                <i class="fas fa-search"></i> Pencarian Mata Kuliah Tawar
             </h2>
             
             <div class="card">
@@ -25,15 +25,15 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
                         <div class="col-md-4 mb-2">
                             <input type="text" name="searchTerm" id="searchTerm" 
                                    class="form-control" 
-                                   placeholder="Nama MK, Dosen, Kelompok..." 
+                                   placeholder="Masukkan kata kunci..." 
                                    required>
                         </div>
                         <div class="col-md-5 mb-2">
                             <select name="searchBy" id="searchBy" class="form-control">
-                                <option value="namamatkul">Cari berdasarkan Nama MK</option>
-                                <option value="namadosen">Cari berdasarkan Dosen</option>
-                                <option value="kelompok">Cari berdasarkan Kelompok</option>
-                                <option value="hari">Cari berdasarkan Hari</option>
+                                <option value="m.namamatkul">Cari berdasarkan Nama MK</option>
+                                <option value="d.namadosen">Cari berdasarkan Nama Dosen</option>
+                                <option value="mt.hari">Cari berdasarkan Hari</option>
+                                <option value="mt.ruang">Cari berdasarkan Ruang</option>
                             </select>
                         </div>
                         <div class="col-md-2 mb-2">
@@ -93,11 +93,6 @@ if (!isset($_SESSION['username']) || $_SESSION['status'] != 'admin') {
         </div>
     </div>
 </div>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 
 <script>
 $(document).ready(function() {
